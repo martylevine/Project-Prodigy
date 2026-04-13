@@ -1,4 +1,1 @@
-This is an investor scheduling portal for Project Javelin, a GP stakes deal.
-Built as a self-contained HTML file.
-Investors: AMG, Blackstone, Blue Owl, Bonaccord, Hunterpoint, PACT, Petershill, RidgeLake, Wafra.
-Do not break the self-contained structure — no external dependencies. Eventually, I need to transition this from a self-contained HTML to a full-stack enterprise software.
+This is an investor scheduling portal for an investment banker responsible for scheduling due diligence calls. THe name of the M&A project is Project Javelin. The investment banker is running a process with 9 GP stakes investors. All investors due diligence calls with various individuals, for example the managing partner and CFO. This is an AI-powered scheduler to keep bankers organized and up to date with diligence requests. Right now the project is a self-contained HTML folder but I would like to turn this into a full-stack enterprise software Eventually.
