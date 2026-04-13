@@ -175,6 +175,36 @@ table.jt tr:last-child td{border-bottom:none;}
 .ai-loading .ai-dots{display:inline-flex;gap:4px;margin-left:8px;}.ai-loading .ai-dots span{width:6px;height:6px;border-radius:50%;background:var(--pl);animation:aiPulse 1.2s infinite;}
 .ai-loading .ai-dots span:nth-child(2){animation-delay:0.2s;}.ai-loading .ai-dots span:nth-child(3){animation-delay:0.4s;}
 @keyframes aiPulse{0%,100%{opacity:0.3;}50%{opacity:1;}}
+.stat-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:1.5rem;}
+.stat-tile{border-radius:14px;padding:20px 18px;position:relative;overflow:hidden;min-height:110px;display:flex;flex-direction:column;justify-content:space-between;}
+.stat-tile::before{content:'';position:absolute;border-radius:50%;opacity:0.18;}
+.stat-tile-1{background:linear-gradient(135deg,#5B21B6 0%,#7C3AED 60%,#A78BFA 100%);}
+.stat-tile-1::before{width:120px;height:120px;background:#fff;top:-30px;right:-30px;}
+.stat-tile-2{background:linear-gradient(135deg,#1E40AF 0%,#2563EB 60%,#60A5FA 100%);}
+.stat-tile-2::before{width:100px;height:100px;background:#fff;bottom:-20px;right:-20px;}
+.stat-tile-3{background:linear-gradient(135deg,#065F46 0%,#059669 60%,#34D399 100%);}
+.stat-tile-3::before{width:110px;height:110px;background:#fff;top:-25px;left:-25px;}
+.stat-tile-4{background:linear-gradient(135deg,#92400E 0%,#D97706 60%,#FCD34D 100%);}
+.stat-tile-4::before{width:130px;height:130px;background:#fff;bottom:-40px;right:-30px;}
+.stat-tile-icon{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;margin-bottom:10px;backdrop-filter:blur(4px);}
+.stat-tile-icon svg{width:17px;height:17px;stroke:#fff;fill:none;stroke-width:1.8;}
+.stat-tile-label{font-size:10px;font-weight:600;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:2px;}
+.stat-tile-value{font-size:28px;font-weight:700;color:#fff;letter-spacing:-0.03em;line-height:1;}
+.stat-tile-sub{font-size:11px;color:rgba(255,255,255,0.65);margin-top:5px;}
+.stat-tile-badge{position:absolute;top:14px;right:14px;background:rgba(255,255,255,0.18);color:#fff;font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:0.04em;backdrop-filter:blur(4px);}
+@media(max-width:768px){.stat-tiles{grid-template-columns:1fr 1fr;}}
+.stat-tile-req{background:linear-gradient(135deg,#0F172A 0%,#1E293B 55%,#0F3460 100%);}
+.req-seg{cursor:pointer;transition:opacity 0.15s,filter 0.15s;}
+.req-seg:hover{opacity:0.82;filter:brightness(1.12);}
+.req-tt-global{display:none;position:fixed;background:rgba(15,23,42,0.96);color:#fff;padding:10px 14px;border-radius:10px;font-size:11px;pointer-events:none;z-index:9999;line-height:1.9;box-shadow:0 4px 20px rgba(0,0,0,0.3);max-width:200px;}
+.req-detail-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.32);align-items:center;justify-content:center;}
+.req-detail-overlay.show{display:flex;}
+.req-detail-box{background:#fff;border-radius:16px;padding:24px 26px;min-width:280px;max-width:380px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.22);}
+.req-detail-close{position:absolute;top:12px;right:16px;border:none;background:none;font-size:22px;cursor:pointer;color:#94a3b8;line-height:1;padding:0;}
+.req-detail-close:hover{color:#1e293b;}
+.req-inv-item{font-size:12px;color:var(--wg);padding:5px 0;border-bottom:1px solid rgba(108,63,160,0.07);display:flex;align-items:center;gap:6px;}
+.req-inv-item:last-child{border-bottom:none;}
+.req-inv-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
 </style>
 </head>
 <body>
@@ -204,11 +234,61 @@ table.jt tr:last-child td{border-bottom:none;}
 <button class="btn bp bs" onclick="viewAs()">Open investor view</button>
 </div>
 
-<div class="sr">
-<div class="sc"><div class="sl">Total Investors</div><div class="sv">9</div><div class="ss">All GP Stakes</div></div>
-<div class="sc"><div class="sl">Calls Booked</div><div class="sv" id="d-bk">0</div><div class="ss">of 36 Total</div></div>
-<div class="sc"><div class="sl">Agendas Received</div><div class="sv" id="d-ag">0</div><div class="ss" id="d-ags">Awaiting Uploads</div></div>
-<div class="sc"><div class="sl">Completion</div><div class="sv" id="d-pc">0%</div><div class="ss">Target: 100%</div></div>
+<div class="stat-tiles">
+<div class="stat-tile stat-tile-2">
+  <span class="stat-tile-badge">Progress</span>
+  <div class="stat-tile-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M9 16l2 2 4-4"/></svg></div>
+  <div>
+    <div class="stat-tile-label">Calls Booked</div>
+    <div class="stat-tile-value" id="d-bk">0</div>
+    <div style="display:flex;align-items:center;gap:7px;margin-top:5px;">
+      <div class="stat-tile-sub">of 36 calls</div>
+      <div style="background:rgba(255,255,255,0.22);color:#fff;font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:0.04em;" id="d-bk-pct">0%</div>
+    </div>
+  </div>
+</div>
+<div class="stat-tile stat-tile-3">
+  <span class="stat-tile-badge">Diligence</span>
+  <div class="stat-tile-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg></div>
+  <div>
+    <div class="stat-tile-label">Agendas Received</div>
+    <div class="stat-tile-value" id="d-ag">0</div>
+    <div class="stat-tile-sub" id="d-ags">Awaiting Uploads</div>
+  </div>
+</div>
+<div class="stat-tile stat-tile-4">
+  <span class="stat-tile-badge">Target: 100%</span>
+  <div class="stat-tile-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+  <div>
+    <div class="stat-tile-label">Completion</div>
+    <div class="stat-tile-value" id="d-pc">0%</div>
+    <div class="stat-tile-sub">Overall Process Status</div>
+  </div>
+</div>
+<div class="stat-tile stat-tile-req" style="min-height:130px;">
+  <span class="stat-tile-badge">9 Investors</span>
+  <div class="stat-tile-label" style="margin-bottom:8px;">Request Status</div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div style="position:relative;flex-shrink:0;width:76px;height:76px;">
+      <svg id="req-svg" width="76" height="76" viewBox="0 0 100 100" style="display:block;"></svg>
+      <div style="position:absolute;top:0;left:0;width:76px;height:76px;display:flex;align-items:center;justify-content:center;pointer-events:none;">
+        <div style="text-align:center;">
+          <div style="font-size:15px;font-weight:700;color:#fff;line-height:1;" id="req-center-n">—</div>
+          <div style="font-size:8px;color:rgba(255,255,255,0.5);margin-top:2px;">booked</div>
+        </div>
+      </div>
+    </div>
+    <div id="req-legend" style="flex:1;display:flex;flex-direction:column;gap:6px;"></div>
+  </div>
+</div>
+</div>
+
+<div id="req-tt-global" class="req-tt-global"></div>
+<div id="req-detail-overlay" class="req-detail-overlay" onclick="closeReqDp()">
+  <div class="req-detail-box" onclick="event.stopPropagation()">
+    <button class="req-detail-close" onclick="closeReqDp()">&#215;</button>
+    <div id="req-dp-body"></div>
+  </div>
 </div>
 
 <div class="sr" id="call-summary-row">
@@ -518,9 +598,88 @@ function iRow(v){
   '<td><button class="btn bo bs" onclick="pvI(\''+v.id+'\')">Preview</button></td></tr>';
 }
 
+var REQ_SEGS=[
+  {key:'complete',label:'Complete',color:'#10B981'},
+  {key:'booked',label:'All Booked',color:'#818CF8'},
+  {key:'inProgress',label:'In Progress',color:'#FBBF24'},
+  {key:'pending',label:'Not Started',color:'#64748B'}
+];
+var _reqDpData={};
+function ptC(cx,cy,r,a){var rad=(a-90)*Math.PI/180;return{x:cx+r*Math.cos(rad),y:cy+r*Math.sin(rad)};}
+function donutPath(cx,cy,ro,ri,sa,ea){var p1=ptC(cx,cy,ro,sa),p2=ptC(cx,cy,ro,ea),p3=ptC(cx,cy,ri,ea),p4=ptC(cx,cy,ri,sa);var lg=ea-sa>180?1:0;return 'M'+p1.x+' '+p1.y+' A'+ro+' '+ro+' 0 '+lg+' 1 '+p2.x+' '+p2.y+' L'+p3.x+' '+p3.y+' A'+ri+' '+ri+' 0 '+lg+' 0 '+p4.x+' '+p4.y+' Z';}
+function getReqData(){
+  var req=CLS.filter(function(c){return !OPTIONAL_CALLS[c];});
+  var d={complete:[],booked:[],inProgress:[],pending:[]};
+  INV.forEach(function(v){
+    var bc=req.filter(function(c){return bk[v.id+'_'+c];}).length;
+    var ha=CLS.some(function(c){return ag[v.id][c]&&ag[v.id][c].length>0;});
+    if(bc===req.length&&ha)d.complete.push(v.n);
+    else if(bc===req.length)d.booked.push(v.n);
+    else if(bc>0)d.inProgress.push(v.n);
+    else d.pending.push(v.n);
+  });
+  return d;
+}
+function updateReqStatus(){
+  var data=getReqData();
+  var total=INV.length;
+  var svg=document.getElementById('req-svg');
+  var legend=document.getElementById('req-legend');
+  var centerEl=document.getElementById('req-center-n');
+  if(!svg||!legend)return;
+  svg.innerHTML='';legend.innerHTML='';
+  var booked=data.complete.length+data.booked.length+data.inProgress.length;
+  if(centerEl)centerEl.textContent=booked+'/'+total;
+  var cx=50,cy=50,ro=46,ri=28,angle=-90;
+  _reqDpData={};
+  REQ_SEGS.forEach(function(seg,si){
+    var investors=data[seg.key];
+    var count=investors.length;
+    _reqDpData[seg.key]={seg:seg,investors:investors};
+    var sweep=count/total*360;
+    if(count>0){
+      var sa=angle,ea=angle+sweep;
+      var pathD;
+      if(sweep>=359.9){
+        pathD=donutPath(cx,cy,ro,ri,sa,sa+179.9)+' '+donutPath(cx,cy,ro,ri,sa+180,ea-0.1);
+      }else{
+        pathD=donutPath(cx,cy,ro,ri,sa,ea);
+      }
+      var path=document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('d',pathD);path.setAttribute('fill',seg.color);path.setAttribute('class','req-seg');
+      path.setAttribute('stroke','rgba(15,23,42,0.5)');path.setAttribute('stroke-width','1.5');
+      (function(s,invs){
+        path.addEventListener('mousemove',function(e){
+          var tt=document.getElementById('req-tt-global');
+          tt.innerHTML='<b style="color:'+s.color+';">'+s.label+' ('+invs.length+')</b><br>'+invs.join('<br>');
+          tt.style.display='block';tt.style.left=(e.clientX+14)+'px';tt.style.top=(e.clientY-12)+'px';
+        });
+        path.addEventListener('mouseleave',function(){document.getElementById('req-tt-global').style.display='none';});
+        path.addEventListener('click',function(e){e.stopPropagation();showReqDp(s,invs);});
+      })(seg,investors);
+      svg.appendChild(path);
+      angle+=sweep;
+    }
+    var opacity=count===0?'0.35':'1';
+    var legendItem=document.createElement('div');
+    legendItem.style.cssText='display:flex;align-items:center;gap:6px;cursor:pointer;opacity:'+opacity+';';
+    legendItem.innerHTML='<div style="width:8px;height:8px;border-radius:50%;background:'+seg.color+';flex-shrink:0;"></div><div style="font-size:9px;color:rgba(255,255,255,0.72);flex:1;white-space:nowrap;">'+seg.label+'</div><div style="font-size:11px;font-weight:700;color:#fff;">'+count+'</div>';
+    if(count>0){(function(s,invs){legendItem.onclick=function(){showReqDp(s,invs);};})(seg,investors);}
+    legend.appendChild(legendItem);
+  });
+}
+function showReqDp(seg,investors){
+  var body=document.getElementById('req-dp-body');
+  body.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;"><div style="width:12px;height:12px;border-radius:50%;background:'+seg.color+';flex-shrink:0;"></div><div style="font-size:15px;font-weight:700;color:var(--ch);">'+seg.label+'</div><div style="margin-left:auto;background:var(--p50);color:var(--p);font-size:11px;font-weight:600;padding:2px 10px;border-radius:20px;">'+investors.length+' investor'+(investors.length!==1?'s':'')+'</div></div>'+
+    (investors.length>0?investors.map(function(n){return '<div class="req-inv-item"><div class="req-inv-dot" style="background:'+seg.color+';"></div>'+n+'</div>';}).join(''):'<div style="font-size:12px;color:var(--wg);padding:8px 0;">No investors currently in this status.</div>');
+  document.getElementById('req-detail-overlay').classList.add('show');
+}
+function closeReqDp(){document.getElementById('req-detail-overlay').classList.remove('show');}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeReqDp();});
 function rD(){
-  var bc=gBC();document.getElementById('d-bk').textContent=bc;document.getElementById('d-pc').textContent=Math.round(bc/36*100)+'%';
+  var bc=gBC();var bpct=Math.round(bc/36*100);document.getElementById('d-bk').textContent=bc;var pctEl=document.getElementById('d-bk-pct');if(pctEl)pctEl.textContent=bpct+'%';document.getElementById('d-pc').textContent=bpct+'%';
   var ac=gAC();document.getElementById('d-ag').textContent=ac;document.getElementById('d-ags').textContent=ac>0?ac+' File'+(ac>1?'s':'')+' Received':'Awaiting Uploads';
+  updateReqStatus();
   document.getElementById('tb1').innerHTML=INV.map(iRow).join('');popVA();
   CLS.forEach(function(c){
     var cnt=INV.filter(function(v){return bk[v.id+'_'+c];}).length;
