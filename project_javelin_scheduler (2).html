@@ -289,7 +289,7 @@ table.jt tr:last-child td{border-bottom:none;}
 <div class="ch2"><h3>Investor Pipeline</h3><div style="display:flex;gap:6px;"><button class="btn bo bs" onclick="show('s-avail')">Open grid</button><button class="btn bp bs" onclick="loadDemo()">Load demo data</button></div></div>
 <div style="overflow-x:auto;">
 <table class="jt">
-<thead><tr><th style="min-width:170px;">Investor</th><th>Model Review</th><th>Asset Review</th><th>LP Base</th><th>Value Add</th><th>Agenda</th><th>Progress</th><th>PIN</th><th></th></tr></thead>
+<thead><tr><th style="min-width:170px;">Investor</th><th>Model Review</th><th>Asset Review</th><th>LP Base</th><th>Value Add</th><th>Agenda</th><th>PIN</th><th></th></tr></thead>
 <tbody id="tb1"></tbody>
 </table>
 </div>
@@ -514,7 +514,6 @@ function iRow(v){
   return '<tr><td><div class="it">'+lh(v.id)+'<div><div style="font-weight:600;">'+v.n+'</div><div style="font-size:11px;color:var(--wg);">'+v.f+'</div></div></div></td>'+
   CLS.map(function(c){var b=bk[v.id+'_'+c];var opt=OPTIONAL_CALLS[c];if(opt&&!b)return '<td><span style="font-size:10px;color:var(--wg);">Optional</span></td>';return '<td>'+(b?'<span class="pl pc">'+b+'</span>':'<span class="pl pp">Pending</span>')+'</td>';}).join('')+
   '<td>'+(ha>0?'<span class="pl pa" onclick="vAg(\''+v.id+'\')">'+ha+' file'+(ha>1?'s':'')+'</span>':'<span style="color:var(--wg);">&mdash;</span>')+(ccCount>0?'<div style="margin-top:3px;font-size:10px;color:var(--p);">+'+ccCount+' custom</div>':'')+'</td>'+
-  '<td><div style="display:flex;align-items:center;gap:8px;"><div class="pt"><div class="pf" style="width:'+pc+'%;"></div></div><span style="font-size:11px;color:var(--wg);">'+pc+'%</span></div></td>'+
   '<td>'+(lk?'<span class="pl pk">Locked</span> <button class="btn bd bs" onclick="uP(\''+v.id+'\')">Unlock</button>':'<span style="font-family:monospace;font-size:12px;color:var(--wg);">'+pn[v.id]+'</span> <button class="btn bs" style="font-size:11px;padding:2px 6px;border:1px solid var(--bd);background:#fff;border-radius:6px;cursor:pointer;" onclick="rP(\''+v.id+'\')">&#x21bb;</button>')+'</td>'+
   '<td><button class="btn bo bs" onclick="pvI(\''+v.id+'\')">Preview</button></td></tr>';
 }
@@ -923,11 +922,64 @@ function handleUp(e){
   Array.from(e.target.files).forEach(function(f){ag[ci][c].push({n:f.name,s:fS(f.size),d:new Date().toLocaleDateString(),t:f.name.split('.').pop().toUpperCase()});addN('<strong>'+INV.find(function(i){return i.id===ci;}).n+'</strong> uploaded for '+c+': '+f.name);toast('Agenda Uploaded');});
   renderBk();rD();e.target.value='';uploadTarget=null;
 }
-function rAI2(a,callType,i){return '<div class="ai2"><div class="aicon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 1v14h8V5l-4-4H4z"/><path d="M8 1v4h4"/></svg></div><div class="ainf"><div class="an">'+a.n+'</div><div class="am">'+a.t+' &middot; '+a.s+' &middot; '+a.d+'</div></div><button class="fr" onclick="rmA2(\''+callType+'\','+i+')">&times;</button></div>';}
-function rAI(a,i,rm){return '<div class="ai2"><div class="aicon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 1v14h8V5l-4-4H4z"/><path d="M8 1v4h4"/></svg></div><div class="ainf"><div class="an">'+a.n+'</div><div class="am">'+a.t+' &middot; '+a.s+' &middot; '+a.d+'</div></div></div>';}
+function escPDF(s){return s.replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)');}
+function getAgendaLines(invName,callType){
+  var date='April 2026';
+  var hdr=['Project Javelin — Confidential','Investor: '+invName,'Call Type: '+callType,'Date: '+date,''];
+  var body={
+    'Model Review':['AGENDA','','1. Welcome & Introductions (5 min)','2. Financial Model Walk-Through (20 min)','   — Return attribution & waterfall mechanics','   — Underwriting assumptions vs. actuals','   — Sensitivity analysis on key variables','3. Historical Performance vs. Projected (15 min)','   — Fund I & II realized comparables','   — GP co-investment economics','4. Open Q&A (15 min)','5. Next Steps & Follow-Up Items'],
+    'Asset Review':['AGENDA','','1. Introductions (5 min)','2. Portfolio Company Overviews (25 min)','   — Asset-level KPIs and trailing metrics','   — Current vs. underwritten performance','   — Key risks and mitigants','3. Exit Pathway Analysis (10 min)','   — Timeline assumptions','   — Comparable transaction review','4. Q&A (15 min)','5. Follow-Up Document Requests'],
+    'LP Base':['AGENDA','','1. Introductions (5 min)','2. LP Composition Overview (15 min)','   — Institutional vs. family office breakdown','   — Geographic distribution','   — Re-up rates by LP cohort','3. Fee & Carry Structure Review (15 min)','   — Management fee step-downs','   — Carried interest & catch-up','   — LP co-investment rights & economics','4. Reporting & Transparency (10 min)','5. Q&A & Follow-Up'],
+    'Value Add':['AGENDA','','1. Introductions (5 min)','2. Operating Platform Overview (20 min)','   — Portfolio support services','   — In-house talent & human capital resources','   — Technology & data capabilities','3. ESG & Impact Initiatives (10 min)','4. Case Studies: Value Creation Examples (10 min)','5. Q&A (10 min)'],
+    'Agenda':['AGENDA','','1. Introductions (5 min)','2. Transaction Overview (15 min)','   — Strategic rationale','   — Preliminary valuation range','3. Key Discussion Points (20 min)','4. Open Q&A (15 min)','5. Next Steps & Timeline']
+  };
+  var items=body[callType]||body['Agenda'];
+  return hdr.concat(items);
+}
+function buildPDF(invName,callType){
+  var lines=getAgendaLines(invName,callType);
+  var nl='\n';
+  var stream='BT\n/F1 13 Tf\n50 760 Td\n';
+  lines.forEach(function(ln,idx){
+    if(idx===0){stream+='/F1 14 Tf\n';}
+    else if(ln==='AGENDA'){stream+='/F1 13 Tf\n';}
+    else{stream+='/F1 11 Tf\n';}
+    stream+='('+escPDF(ln)+') Tj\n0 -18 Td\n';
+  });
+  stream+='ET\n';
+  var o1='1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n';
+  var o2='2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n';
+  var o3='3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>\nendobj\n';
+  var o4='4 0 obj\n<< /Length '+stream.length+' >>\nstream\n'+stream+'endstream\nendobj\n';
+  var o5='5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n';
+  var hdr='%PDF-1.4\n';
+  var body=o1+o2+o3+o4+o5;
+  var xrefPos=hdr.length+body.length;
+  var offs=[hdr.length];
+  offs.push(offs[0]+o1.length);
+  offs.push(offs[1]+o2.length);
+  offs.push(offs[2]+o3.length);
+  offs.push(offs[3]+o4.length);
+  var xref='xref\n0 6\n0000000000 65535 f \n';
+  offs.forEach(function(o){xref+=String(o).padStart(10,'0')+' 00000 n \n';});
+  var trailer='trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n'+xrefPos+'\n%%EOF\n';
+  return hdr+body+xref+trailer;
+}
+function dlAg(invId,callType,idx){
+  var inv=INV.find(function(i){return i.id===invId;});
+  var file=ag[invId][callType][idx];
+  var pdf=buildPDF(inv.n,callType);
+  var blob=new Blob([pdf],{type:'application/pdf'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download=file.n.replace(/\.[^.]+$/,'')+'.pdf';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},1000);
+}
+function rAI2(a,callType,i){return '<div class="ai2"><div class="aicon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 1v14h8V5l-4-4H4z"/><path d="M8 1v4h4"/></svg></div><div class="ainf"><div class="an">'+a.n+'</div><div class="am">'+a.t+' &middot; '+a.s+' &middot; '+a.d+'</div></div><button class="btn bo bs" style="margin-right:6px;font-size:11px;padding:2px 8px;" onclick="dlAg(\''+ci+'\',\''+callType.replace(/'/g,"\\'")+"',"+i+')">&#x2193; PDF</button><button class="fr" onclick="rmA2(\''+callType+'\','+i+')">&times;</button></div>';}
+function rAI(a,invId,callType,i){return '<div class="ai2"><div class="aicon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 1v14h8V5l-4-4H4z"/><path d="M8 1v4h4"/></svg></div><div class="ainf"><div class="an">'+a.n+'</div><div class="am">'+a.t+' &middot; '+a.s+' &middot; '+a.d+'</div></div><button class="btn bo bs" style="font-size:11px;padding:2px 8px;" onclick="dlAg(\''+invId+'\',\''+callType.replace(/'/g,"\\'")+"',"+i+')">&#x2193; PDF</button></div>';}
 function rmA2(callType,i){if(!ci)return;ag[ci][callType].splice(i,1);renderBk();rD();}
 function rmA(i){}
-function vAg(id){var v=INV.find(function(i){return i.id===id;});document.getElementById('avt').textContent=v.n+' \u2014 Agendas';var html='';var allC=CLS.concat(customCalls[id].map(function(cc){return cc.name;}));allC.forEach(function(c){var files=ag[id][c]||[];if(files.length>0){html+='<div class="cd" style="margin-bottom:12px;"><div class="ch2"><h3>'+c+'</h3></div><div style="padding:14px;">'+files.map(function(a,i){return rAI(a,i,false);}).join('')+'</div></div>';}});if(!html)html='<div class="cd"><div style="padding:24px;text-align:center;font-size:13px;color:var(--wg);">No Agendas Uploaded Yet</div></div>';document.getElementById('avl').innerHTML=html;show('s-agv');}
+function vAg(id){var v=INV.find(function(i){return i.id===id;});document.getElementById('avt').textContent=v.n+' \u2014 Agendas';var html='';var allC=CLS.concat(customCalls[id].map(function(cc){return cc.name;}));allC.forEach(function(c){var files=ag[id][c]||[];if(files.length>0){html+='<div class="cd" style="margin-bottom:12px;"><div class="ch2"><h3>'+c+'</h3></div><div style="padding:14px;">'+files.map(function(a,i){return rAI(a,id,c,i);}).join('')+'</div></div>';}});if(!html)html='<div class="cd"><div style="padding:24px;text-align:center;font-size:13px;color:var(--wg);">No Agendas Uploaded Yet</div></div>';document.getElementById('avl').innerHTML=html;show('s-agv');}
 function fS(b){if(b<1024)return b+' B';if(b<1048576)return Math.round(b/1024)+' KB';return(b/1048576).toFixed(1)+' MB';}
 
 function sE(){document.getElementById('ei').innerHTML=INV.map(function(v){return '<option value="'+v.id+'">'+v.n+' \u2014 '+v.f+'</option>';}).join('');genEmail();}
@@ -963,20 +1015,20 @@ var lastAIItems=[];
 function generateAINextSteps(){
   var items=[];
   var availSlots=Object.keys(sl).length;
-  if(availSlots===0){items.push({priority:'urgent',title:'No Availability Set on Grid',description:'The Javelin team availability grid is empty. Set availability before investors can book Asset Review, LP Base, and Value Add calls.',investor:null,callType:null});}
+  if(availSlots===0){items.push({priority:'urgent',title:'Remind Client to Set Availability',description:'Remind the Javelin team to set their availability on the grid so investors can book Asset Review, LP Base, and Value Add calls.',investor:null,callType:null});}
 
   INV.forEach(function(v){
     var requiredCalls=CLS.filter(function(c){return !OPTIONAL_CALLS[c];});
     var bookedCount=requiredCalls.filter(function(c){return bk[v.id+'_'+c];}).length;
     if(bookedCount===0){
-      items.push({priority:'urgent',title:'No Calls Scheduled — '+v.n,description:'Send scheduling link and PIN to '+v.n+' ('+v.f+'). No calls have been booked yet.',investor:v.n,callType:null});
+      items.push({priority:'urgent',title:'Send Scheduling Link & PIN to '+v.n,description:'Email '+v.n+' with the secure scheduling link and PIN so they can book required follow-up calls.',investor:v.n,callType:null});
     }else if(bookedCount<requiredCalls.length){
       var pending=requiredCalls.filter(function(c){return !bk[v.id+'_'+c];});
-      items.push({priority:'warning',title:'Incomplete Schedule — '+v.n,description:v.n+' has '+bookedCount+'/'+requiredCalls.length+' required calls booked. Pending: '+pending.join(', ')+'.',investor:v.n,callType:null});
+      items.push({priority:'warning',title:'Follow up: Book Remaining Calls for '+v.n,description:'Follow up with '+v.n+' to book the remaining calls: '+pending.join(', ')+'.',investor:v.n,callType:null});
     }
     CLS.forEach(function(c){
       if(bk[v.id+'_'+c]&&(ag[v.id][c]||[]).length===0){
-        items.push({priority:'warning',title:'Missing Agenda — '+v.n+' '+c,description:v.n+' has '+c+' scheduled ('+bk[v.id+'_'+c]+') but has not uploaded an agenda. Follow up to request materials.',investor:v.n,callType:c});
+        items.push({priority:'warning',title:'Request Agenda from '+v.n+' for '+c,description:'Reach out to '+v.n+' to request the agenda for '+c+' (scheduled '+bk[v.id+'_'+c]+').',investor:v.n,callType:c});
       }
     });
     if(bookedCount===4){
@@ -988,7 +1040,7 @@ function generateAINextSteps(){
   CLS.forEach(function(c){
     var assigned=callAssign[c].filter(function(p){return !p.system;});
     if(assigned.length===0&&c!=='Model Review'){
-      items.push({priority:'urgent',title:'No Javelin Team Assigned — '+c,description:'No team member is assigned to '+c+'. Assign someone in the Javelin Team section so investors can book.',investor:null,callType:c});
+      items.push({priority:'urgent',title:'Assign Javelin Team Member to '+c,description:'Assign a Javelin team member to '+c+' in the Team section so investors can book that call.',investor:null,callType:c});
     }
   });
 
