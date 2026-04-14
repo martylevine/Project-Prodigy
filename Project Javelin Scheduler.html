@@ -216,7 +216,7 @@ table.jt tr:last-child td{border-bottom:none;}
 <div>
 <div style="display:flex;align-items:center;gap:10px;">
 <div style="width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="20" height="20"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
-<div><h1>Project Javelin</h1><div class="sub">GP stakes · Evercore · Mar 31 – Apr 4</div></div>
+<div><h1>Project Javelin</h1></div>
 </div>
 </div>
 <div class="tba">
@@ -345,7 +345,6 @@ table.jt tr:last-child td{border-bottom:none;}
 <div class="ai-panel-header">
 <h3><span class="ai-sparkle"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.5"><path d="M8 1v3M8 12v3M1 8h3M12 8h3M3.5 3.5l2 2M10.5 10.5l2 2M3.5 12.5l2-2M10.5 5.5l2-2"/></svg></span> AI Next Steps</h3>
 <div style="display:flex;gap:6px;">
-<button class="btn bo bs" onclick="generateAINextSteps()"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="vertical-align:-1px;margin-right:3px;"><path d="M1 12l4-8 4 6 3-4 3 6"/></svg>Refresh</button>
 <button class="btn bo bs" onclick="copyAINextSteps()">Copy</button>
 </div>
 </div>
@@ -436,6 +435,65 @@ table.jt tr:last-child td{border-bottom:none;}
 </div>
 </div>
 
+<!-- Calendar Invite Modal -->
+<div id="cal-modal" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,0.38);align-items:center;justify-content:center;">
+<div style="background:#fff;border-radius:16px;padding:28px 30px;width:100%;max-width:460px;box-shadow:0 24px 64px rgba(0,0,0,0.22);position:relative;">
+  <button onclick="document.getElementById('cal-modal').style.display='none';" style="position:absolute;top:14px;right:18px;border:none;background:none;font-size:20px;cursor:pointer;color:#94a3b8;line-height:1;">&#x2715;</button>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
+    <div style="width:38px;height:38px;border-radius:10px;background:#0078d4;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M9 16l2 2 4-4"/></svg>
+    </div>
+    <div><div style="font-size:15px;font-weight:700;color:#1e293b;">Send Calendar Invite</div><div style="font-size:12px;color:#64748b;">via Outlook</div></div>
+  </div>
+  <div style="background:#f8fafc;border-radius:10px;padding:14px 16px;margin-bottom:16px;border:1px solid #e2e8f0;">
+    <div style="font-size:13px;font-weight:600;color:#1e293b;margin-bottom:2px;" id="cal-title"></div>
+    <div style="font-size:12px;color:#64748b;" id="cal-datetime"></div>
+  </div>
+  <div style="margin-bottom:14px;">
+    <div style="font-size:12px;font-weight:600;color:#475569;margin-bottom:8px;">Attendees</div>
+    <div id="cal-attendees-list" style="margin-bottom:8px;"></div>
+    <div style="display:flex;gap:6px;">
+      <input type="text" id="cal-att-name" placeholder="Name" class="tz" style="flex:1;padding:6px 10px;font-size:12px;">
+      <input type="email" id="cal-att-email" placeholder="email@example.com" class="tz" style="flex:1.5;padding:6px 10px;font-size:12px;">
+      <button class="btn bo bs" onclick="calAddAttendee()" style="white-space:nowrap;">+ Add</button>
+    </div>
+  </div>
+  <div style="margin-bottom:18px;">
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;">
+      <input type="checkbox" id="cal-zoom-toggle" onchange="toggleZoomInput()" style="width:15px;height:15px;accent-color:var(--p);">
+      <span style="font-size:13px;font-weight:500;color:#334155;">Include Zoom Link</span>
+    </label>
+    <div id="cal-zoom-wrap" style="display:none;margin-top:8px;">
+      <input type="text" id="cal-zoom-url" class="tz" placeholder="https://zoom.us/j/..." style="width:100%;padding:7px 10px;font-size:12px;">
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;">
+    <button class="btn bo bs" onclick="document.getElementById('cal-modal').style.display='none';">Skip</button>
+    <button class="btn" style="background:#0078d4;color:#fff;border-color:#0078d4;" onclick="downloadICS()">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.4" style="vertical-align:-2px;margin-right:4px;"><path d="M8 2v9"/><path d="M4 8l4 4 4-4"/><rect x="2" y="13" width="12" height="2" rx="1"/></svg>
+      Download &amp; Open in Outlook
+    </button>
+  </div>
+</div>
+</div>
+
+<!-- Unbook Confirmation Modal -->
+<div id="unbook-modal" style="display:none;position:fixed;inset:0;z-index:950;background:rgba(0,0,0,0.38);align-items:center;justify-content:center;">
+<div style="background:#fff;border-radius:14px;padding:24px 26px;max-width:360px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.22);">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+    <div style="width:36px;height:36px;border-radius:10px;background:#fee2e2;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+    </div>
+    <div><div style="font-size:15px;font-weight:700;color:#1e293b;">Cancel Booking?</div><div style="font-size:12px;color:#64748b;">This will free up the time slot.</div></div>
+  </div>
+  <div id="unbook-detail" style="background:#f8fafc;border-radius:8px;padding:10px 14px;font-size:13px;color:#334155;margin-bottom:18px;border:1px solid #e2e8f0;"></div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;">
+    <button class="btn bo bs" onclick="closeUnbookModal()">Keep Booking</button>
+    <button class="btn bs" style="background:#ef4444;color:#fff;border-color:#ef4444;" onclick="confirmUnbook()">Yes, Cancel It</button>
+  </div>
+</div>
+</div>
+
 <div id="s-email" class="screen">
 <button class="bb" onclick="show('s-dash')"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Dashboard</button>
 <div class="topbar" style="margin-bottom:1rem;"><div><h1>Outreach Email</h1><div class="sub">Draft Investor-Specific Scheduling Emails</div></div></div>
@@ -496,7 +554,7 @@ var INV=[
 {id:'blackstone',n:'Blackstone',f:'Blackstone Strategic Capital'},
 {id:'blueowl',n:'Blue Owl',f:'Blue Owl Capital'},
 {id:'bonaccord',n:'Bonaccord',f:'Bonaccord Capital Partners'},
-{id:'hunterpoint',n:'Hunterpoint',f:'Hunterpoint Capital'},
+{id:'hunterpoint',n:'Hunter Point',f:'Hunter Point Capital'},
 {id:'pact',n:'PACT',f:'PACT Capital'},
 {id:'petershill',n:'Petershill',f:'Petershill Partners (Goldman Sachs)'},
 {id:'ridgelake',n:'RidgeLake',f:'RidgeLake Partners'},
@@ -536,6 +594,8 @@ var callAssign={
   'Value Add':[{name:'Gene Yoon',title:'Managing Partner',email:'gyoon@javelin.com'}]
 };
 var sl={},bk={},pn={},ag={},nf=[],la={},ci=null,dr=false,dm=null,uploadTarget=null;
+var callAttendees={}; // key: invId+'_'+callName, value: [{name,email}]
+var bkSlot={};        // key: invId+'_'+callName, value: slotKey or null
 var undoStack=[];
 var MAX_UNDO=50;
 function pushUndo(action){undoStack.push(action);if(undoStack.length>MAX_UNDO)undoStack.shift();}
@@ -546,9 +606,13 @@ function doUndo(){
     if(action.prev)sl[action.key]={t:action.prev};else delete sl[action.key];
     rG();toast('Slot Undone');
   }else if(action.type==='book'){
-    delete bk[action.key];
+    delete bk[action.key];delete bkSlot[action.key];
     if(action.slotKey&&sl[action.slotKey]){delete sl[action.slotKey].by;}
     renderBk();rD();toast('Booking Undone');
+  }else if(action.type==='unbook'){
+    bk[action.key]=action.prevBk;bkSlot[action.key]=action.slotKey;
+    if(action.slotKey&&sl[action.slotKey])sl[action.slotKey].by=action.iid;
+    renderBk();rD();toast('Cancellation Reversed');
   }else if(action.type==='slotBatch'){
     action.changes.forEach(function(ch){
       if(ch.prev)sl[ch.key]={people:ch.prev};else delete sl[ch.key];
@@ -592,7 +656,7 @@ function iRow(v){
   var lk=la[v.id]>=3;
   var ccCount=customCalls[v.id].length;
   return '<tr><td><div class="it">'+lh(v.id)+'<div><div style="font-weight:600;">'+v.n+'</div><div style="font-size:11px;color:var(--wg);">'+v.f+'</div></div></div></td>'+
-  CLS.map(function(c){var b=bk[v.id+'_'+c];var opt=OPTIONAL_CALLS[c];if(opt&&!b)return '<td><span style="font-size:10px;color:var(--wg);">Optional</span></td>';return '<td>'+(b?'<span class="pl pc">'+b+'</span>':'<span class="pl pp">Pending</span>')+'</td>';}).join('')+
+  CLS.map(function(c){var b=bk[v.id+'_'+c];var opt=OPTIONAL_CALLS[c];if(opt&&!b)return '<td><span style="font-size:10px;color:var(--wg);">Optional</span></td>';return '<td>'+(b?'<span class="pl pc" style="display:inline-flex;align-items:center;gap:5px;">'+b+'<button title="Cancel booking" onclick="showUnbookModal(\''+v.id+'\',\''+c.replace(/'/g,"\\'")+'\');event.stopPropagation();" style="border:none;background:none;cursor:pointer;color:#ef4444;font-size:14px;line-height:1;padding:0;margin-left:2px;">&times;</button></span>':'<span class="pl pp">Pending</span>')+'</td>';}).join('')+
   '<td>'+(ha>0?'<span class="pl pa" onclick="vAg(\''+v.id+'\')">'+ha+' file'+(ha>1?'s':'')+'</span>':'<span style="color:var(--wg);">&mdash;</span>')+(ccCount>0?'<div style="margin-top:3px;font-size:10px;color:var(--p);">+'+ccCount+' custom</div>':'')+'</td>'+
   '<td>'+(lk?'<span class="pl pk">Locked</span> <button class="btn bd bs" onclick="uP(\''+v.id+'\')">Unlock</button>':'<span style="font-family:monospace;font-size:12px;color:var(--wg);">'+pn[v.id]+'</span> <button class="btn bs" style="font-size:11px;padding:2px 6px;border:1px solid var(--bd);background:#fff;border-radius:6px;cursor:pointer;" onclick="rP(\''+v.id+'\')">&#x21bb;</button>')+'</td>'+
   '<td><button class="btn bo bs" onclick="pvI(\''+v.id+'\')">Preview</button></td></tr>';
@@ -1006,6 +1070,18 @@ function renderBk(){
     var hasAssign=callAssign[c]&&callAssign[c].length>0;
     var ns=hasAssign&&callAssign[c].some(function(p){return !p.system;});
     if(!ns)ns=isCustom;
+    var attKey=v.id+'_'+c;
+    if(!callAttendees[attKey])callAttendees[attKey]=[];
+    var existingAtts=callAttendees[attKey];
+    var attChips=existingAtts.map(function(a,i){return '<span style="display:inline-flex;align-items:center;gap:4px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:20px;padding:2px 8px 2px 6px;font-size:11px;color:#334155;"><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>'+a.name+'<button onclick="removeCallAtt(\''+attKey+'\','+i+')" style="border:none;background:none;cursor:pointer;color:#94a3b8;padding:0;line-height:1;font-size:13px;">&times;</button></span>';}).join('');
+    var attSection='<div style="margin-top:10px;padding:10px 12px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;">'+
+      '<div style="font-size:11px;font-weight:600;color:#64748b;letter-spacing:0.04em;margin-bottom:7px;">YOUR ATTENDEES</div>'+
+      (attChips?'<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;">'+attChips+'</div>':'')+
+      '<div style="display:flex;gap:5px;">'+
+      '<input type="text" id="atn-'+cid+'" placeholder="Name" class="tz" style="flex:1;min-width:0;padding:5px 8px;font-size:12px;">'+
+      '<input type="email" id="ate-'+cid+'" placeholder="email@example.com" class="tz" style="flex:1.6;min-width:0;padding:5px 8px;font-size:12px;">'+
+      '<button class="btn bo bs" style="white-space:nowrap;" onclick="addCallAtt(\''+attKey+'\',\''+cid+'\')">+ Add</button>'+
+      '</div></div>';
     var sh='';
     if(!ib&&ns){
       var requiredPeople=isCustom?[]:((callAssign[c]||[]).filter(function(p){return !p.system;}).map(function(p){return p.name;}));
@@ -1014,11 +1090,11 @@ function renderBk(){
         if(requiredPeople.length===0)return true;
         return requiredPeople.some(function(rp){return e[1].people.indexOf(rp)!==-1;});
       });
-      if(av.length>0){sh='<div style="margin-top:10px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span style="font-size:12px;color:var(--wg);">Duration:</span>'+durOpts.replace('dur-SEL','dur-'+cid)+'</div><div style="display:flex;flex-wrap:wrap;gap:5px;">'+av.slice(0,8).map(function(e){var p=e[0].split('_');return '<button class="btn bo bs" onclick="bkS(\''+v.id+'\',\''+c.replace(/'/g,"\\'")+'\',\''+e[0]+'\')">'+dateKeyToLabel(p[0])+' '+adjT(p[1],tz)+'</button>';}).join('')+(av.length>8?'<span style="font-size:11px;color:var(--wg);padding:4px;">+'+(av.length-8)+' more</span>':'')+'</div></div>';}
+      if(av.length>0){sh=attSection+'<div style="margin-top:10px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span style="font-size:12px;color:var(--wg);">Duration:</span>'+durOpts.replace('dur-SEL','dur-'+cid)+'</div><div style="display:flex;flex-wrap:wrap;gap:5px;">'+av.slice(0,8).map(function(e){var p=e[0].split('_');return '<button class="btn bo bs" onclick="bkS(\''+v.id+'\',\''+c.replace(/'/g,"\\'")+'\',\''+e[0]+'\')">'+dateKeyToLabel(p[0])+' '+adjT(p[1],tz)+'</button>';}).join('')+(av.length>8?'<span style="font-size:11px;color:var(--wg);padding:4px;">+'+(av.length-8)+' more</span>':'')+'</div></div>';}
       else sh='<div style="margin-top:10px;font-size:12px;color:var(--wg);">No Slots Available</div>';
     }
-    if(!ib&&!ns&&!isCustom){sh='<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;"><input type="date" id="od-'+cid+'" class="tz" style="padding:6px 10px;"><select id="ot-'+cid+'" class="tz" style="padding:6px 10px;">'+HRS.map(function(h){return '<option value="'+h+'">'+fH(h)+'</option>';}).join('')+'</select>'+durOpts.replace('dur-SEL','dur-'+cid)+'<button class="btn bp bs" onclick="bkO(\''+v.id+'\',\''+c+'\')">Book</button></div>';}
-    if(!ib&&isCustom&&!av){sh='<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;"><input type="date" id="od-'+cid+'" class="tz" style="padding:6px 10px;"><select id="ot-'+cid+'" class="tz" style="padding:6px 10px;">'+HRS.map(function(h){return '<option value="'+h+'">'+fH(h)+'</option>';}).join('')+'</select>'+durOpts.replace('dur-SEL','dur-'+cid)+'<button class="btn bp bs" onclick="bkO(\''+v.id+'\',\''+c.replace(/'/g,"\\'")+'\')">Book</button></div>';}
+    if(!ib&&!ns&&!isCustom){sh=attSection+'<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;"><input type="date" id="od-'+cid+'" class="tz" style="padding:6px 10px;"><select id="ot-'+cid+'" class="tz" style="padding:6px 10px;">'+HRS.map(function(h){return '<option value="'+h+'">'+fH(h)+'</option>';}).join('')+'</select>'+durOpts.replace('dur-SEL','dur-'+cid)+'<button class="btn bp bs" onclick="bkO(\''+v.id+'\',\''+c+'\')">Book</button></div>';}
+    if(!ib&&isCustom&&!av){sh=attSection+'<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;"><input type="date" id="od-'+cid+'" class="tz" style="padding:6px 10px;"><select id="ot-'+cid+'" class="tz" style="padding:6px 10px;">'+HRS.map(function(h){return '<option value="'+h+'">'+fH(h)+'</option>';}).join('')+'</select>'+durOpts.replace('dur-SEL','dur-'+cid)+'<button class="btn bp bs" onclick="bkO(\''+v.id+'\',\''+c.replace(/'/g,"\\'")+'\')">Book</button></div>';}
     if(!ag[v.id][c])ag[v.id][c]=[];
     var agFiles=ag[v.id][c];
     var agHtml='<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--bd);">'+
@@ -1033,7 +1109,8 @@ function renderBk(){
     var optLabel=isOpt?'<span style="font-size:10px;color:var(--wg);background:var(--iv);padding:2px 6px;border-radius:10px;margin-left:6px;">Optional</span>':'';
     var customLabel=isCustom?'<span style="font-size:10px;color:var(--p);background:var(--p50);padding:2px 6px;border-radius:10px;margin-left:6px;">Requested</span>':'';
     var teamChips=(!isCustom&&callAssign[c])?callAssign[c].filter(function(p){return !p.system;}).map(function(p){var ini=p.name.split(' ').map(function(w){return w[0];}).join('').toUpperCase().substring(0,2);return '<span class="team-chip" style="font-size:10px;padding:2px 6px 2px 3px;margin:1px;"><span class="tc-avatar" style="width:16px;height:16px;font-size:7px;">'+ini+'</span>'+p.name+'</span>';}).join(''):'';
-    return '<div class="cci'+(ib?' bcd':'')+'"><div style="display:flex;justify-content:space-between;align-items:flex-start;"><div style="flex:1;"><h4>'+c+optLabel+customLabel+'</h4><p style="margin-bottom:4px;">'+callDescBk+'</p>'+(teamChips?'<div style="margin-bottom:4px;">'+teamChips+'</div>':'')+(ib?'<div style="margin-top:8px;"><span class="pl pc">'+ib+'</span></div>':sh)+'</div>'+(ib?'<svg width="24" height="24" viewBox="0 0 20 20" fill="none" style="flex-shrink:0;margin-top:2px;"><circle cx="10" cy="10" r="9" stroke="var(--gn)" stroke-width="1.5"/><path d="M6 10l3 3 5-5" stroke="var(--gn)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')+'</div>'+agHtml+'</div>';
+    var bookedSection=ib?'<div style="margin-top:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;"><span class="pl pc">'+ib+'</span><button class="btn bs" style="font-size:11px;padding:3px 10px;border:1px solid #fca5a5;background:#fee2e2;color:#ef4444;border-radius:6px;cursor:pointer;" onclick="showUnbookModal(\''+v.id+'\',\''+c.replace(/'/g,"\\'")+'\')">Cancel Booking</button></div>':'';
+    return '<div class="cci'+(ib?' bcd':'')+'"><div style="display:flex;justify-content:space-between;align-items:flex-start;"><div style="flex:1;"><h4>'+c+optLabel+customLabel+'</h4><p style="margin-bottom:4px;">'+callDescBk+'</p>'+(teamChips?'<div style="margin-bottom:4px;">'+teamChips+'</div>':'')+(ib?bookedSection:sh)+'</div>'+(ib?'<svg width="24" height="24" viewBox="0 0 20 20" fill="none" style="flex-shrink:0;margin-top:2px;"><circle cx="10" cy="10" r="9" stroke="var(--gn)" stroke-width="1.5"/><path d="M6 10l3 3 5-5" stroke="var(--gn)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')+'</div>'+agHtml+'</div>';
   }).join('');
 
   html+='<div style="margin-top:16px;border:2px dashed var(--bd);border-radius:var(--r);padding:18px;text-align:center;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor=\'var(--pl)\';this.style.background=\'var(--p50)\'" onmouseout="this.style.borderColor=\'\';this.style.background=\'\'" onclick="showRequestCallForm()">'+
@@ -1056,10 +1133,170 @@ function renderBk(){
 function adjT(t,o){var p=t.split(':').map(Number);var n=p[0]+o;if(n<0)n+=24;if(n>=24)n-=24;var ap=n>=12?'PM':'AM';var h2=n>12?n-12:n===0?12:n;return h2+':'+(p[1]<10?'0'+p[1]:p[1])+' '+ap;}
 function getDur(c){var el=document.getElementById('dur-'+c.replace(/\s/g,''));return el?parseInt(el.value):60;}
 function addMin(timeStr,min){var p=timeStr.split(':').map(Number);var total=p[0]*60+p[1]+min;var h=Math.floor(total/60)%24;var m=total%60;return h+':'+(m<10?'0'+m:m);}
-function bkS(iid,c,sk){var p=sk.split('_');var dur=getDur(c);var startTime=p[1];var endTime=addMin(startTime,dur);bk[iid+'_'+c]=dateKeyToLabel(p[0])+'<br>'+fH(startTime)+' – '+fH(endTime);sl[sk].by=iid;pushUndo({type:'book',key:iid+'_'+c,slotKey:sk});toast(c+' Booked');renderBk();rD();}
-function bkO(iid,c){var cid=c.replace(/\s/g,'');var de=document.getElementById('od-'+cid);var te=document.getElementById('ot-'+cid);if(!de.value){toast('Select A Date');return;}var dur=getDur(c);var d=new Date(de.value+'T00:00:00');var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];var dayLabel=days[d.getDay()]+' '+(d.getMonth()+1)+'/'+d.getDate();var startTime=te.value;var endTime=addMin(startTime,dur);bk[iid+'_'+c]=dayLabel+'<br>'+fH(startTime)+' – '+fH(endTime);pushUndo({type:'book',key:iid+'_'+c,slotKey:null});toast(c+' Booked');renderBk();rD();}
+function bkS(iid,c,sk){var p=sk.split('_');var dur=getDur(c);var startTime=p[1];var endTime=addMin(startTime,dur);bk[iid+'_'+c]=dateKeyToLabel(p[0])+'<br>'+fH(startTime)+' – '+fH(endTime);sl[sk].by=iid;bkSlot[iid+'_'+c]=sk;pushUndo({type:'book',iid:iid,callName:c,key:iid+'_'+c,slotKey:sk});toast(c+' Booked');renderBk();rD();showCalModal({iid:iid,callName:c,dateStr:p[0],startTime:startTime,endTime:endTime,dur:dur});}
+function bkO(iid,c){var cid=c.replace(/\s/g,'');var de=document.getElementById('od-'+cid);var te=document.getElementById('ot-'+cid);if(!de.value){toast('Select A Date');return;}var dur=getDur(c);var d=new Date(de.value+'T00:00:00');var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];var dayLabel=days[d.getDay()]+' '+(d.getMonth()+1)+'/'+d.getDate();var startTime=te.value;var endTime=addMin(startTime,dur);bk[iid+'_'+c]=dayLabel+'<br>'+fH(startTime)+' – '+fH(endTime);bkSlot[iid+'_'+c]=null;pushUndo({type:'book',iid:iid,callName:c,key:iid+'_'+c,slotKey:null});toast(c+' Booked');renderBk();rD();showCalModal({iid:iid,callName:c,dateStr:de.value,startTime:startTime,endTime:endTime,dur:dur});}
+
+// ── Unbook / cancel booking ───────────────────────────────────────────────────
+var _pendingUnbook=null;
+function showUnbookModal(iid,c){
+  _pendingUnbook={iid:iid,c:c};
+  var raw=bk[iid+'_'+c]||'';
+  var inv=INV.find(function(i){return i.id===iid;});
+  var label=(inv?inv.n+' — ':'')+c+': '+raw.replace('<br>',' ');
+  document.getElementById('unbook-detail').textContent=label;
+  document.getElementById('unbook-modal').style.display='flex';
+}
+function closeUnbookModal(){document.getElementById('unbook-modal').style.display='none';_pendingUnbook=null;}
+function confirmUnbook(){
+  if(!_pendingUnbook)return;
+  var iid=_pendingUnbook.iid,c=_pendingUnbook.c,key=iid+'_'+c;
+  var prevBk=bk[key];var sk=bkSlot[key]||null;
+  delete bk[key];delete bkSlot[key];
+  if(sk&&sl[sk])delete sl[sk].by;
+  pushUndo({type:'unbook',iid:iid,callName:c,key:key,prevBk:prevBk,slotKey:sk});
+  toast(c+' Booking Cancelled');
+  closeUnbookModal();renderBk();rD();
+}
 
 function triggerUpload(callType){uploadTarget=callType;document.getElementById('fi').click();}
+
+// ── Attendee management per call ─────────────────────────────────────────────
+function addCallAtt(attKey,cid){
+  var nameEl=document.getElementById('atn-'+cid);
+  var emailEl=document.getElementById('ate-'+cid);
+  var name=(nameEl?nameEl.value.trim():'');
+  var email=(emailEl?emailEl.value.trim():'');
+  if(!name&&!email){toast('Enter a name or email');return;}
+  if(!callAttendees[attKey])callAttendees[attKey]=[];
+  callAttendees[attKey].push({name:name||email,email:email||''});
+  renderBk();
+}
+function removeCallAtt(attKey,idx){
+  if(callAttendees[attKey])callAttendees[attKey].splice(idx,1);
+  renderBk();
+}
+
+// ── Calendar invite modal ─────────────────────────────────────────────────────
+var _calDetails={};
+function showCalModal(details){
+  _calDetails=details;
+  var inv=INV.find(function(i){return i.id===details.iid;});
+  var invName=inv?inv.n:'';
+  document.getElementById('cal-title').textContent='Project Javelin – '+details.callName+' ('+invName+')';
+  // Format human-readable datetime
+  var dtLabel='';
+  if(details.dateStr&&details.dateStr.indexOf('-')!==-1){
+    var dp=details.dateStr.split('-');
+    if(dp.length===3){
+      var d2=new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
+      var dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      var mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      dtLabel=dn[d2.getDay()]+', '+mn[d2.getMonth()]+' '+d2.getDate()+', '+dp[0]+' · '+fH(details.startTime)+' – '+fH(details.endTime);
+    }
+  }
+  document.getElementById('cal-datetime').textContent=dtLabel;
+  // Pre-fill attendees from stored list
+  var atts=(callAttendees[details.iid+'_'+details.callName]||[]).slice();
+  document.getElementById('cal-modal')._attendees=atts.map(function(a){return {name:a.name,email:a.email};});
+  renderCalAttendees();
+  document.getElementById('cal-att-name').value='';
+  document.getElementById('cal-att-email').value='';
+  document.getElementById('cal-zoom-toggle').checked=false;
+  document.getElementById('cal-zoom-wrap').style.display='none';
+  document.getElementById('cal-zoom-url').value='';
+  document.getElementById('cal-modal').style.display='flex';
+}
+function renderCalAttendees(){
+  var modal=document.getElementById('cal-modal');
+  var atts=modal._attendees||[];
+  var el=document.getElementById('cal-attendees-list');
+  if(atts.length===0){el.innerHTML='<div style="font-size:12px;color:#94a3b8;margin-bottom:4px;">No attendees added yet.</div>';return;}
+  el.innerHTML=atts.map(function(a,i){return '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f1f5f9;font-size:12px;color:#334155;"><span><strong>'+a.name+'</strong>'+(a.email?' &lt;'+a.email+'&gt;':'')+'</span><button onclick="calRemoveAtt('+i+')" style="border:none;background:none;cursor:pointer;color:#94a3b8;font-size:14px;line-height:1;">&times;</button></div>';}).join('');
+}
+function calAddAttendee(){
+  var name=document.getElementById('cal-att-name').value.trim();
+  var email=document.getElementById('cal-att-email').value.trim();
+  if(!name&&!email){toast('Enter a name or email');return;}
+  var modal=document.getElementById('cal-modal');
+  if(!modal._attendees)modal._attendees=[];
+  modal._attendees.push({name:name||email,email:email||''});
+  document.getElementById('cal-att-name').value='';
+  document.getElementById('cal-att-email').value='';
+  renderCalAttendees();
+}
+function calRemoveAtt(i){
+  var modal=document.getElementById('cal-modal');
+  if(modal._attendees)modal._attendees.splice(i,1);
+  renderCalAttendees();
+}
+function toggleZoomInput(){
+  var on=document.getElementById('cal-zoom-toggle').checked;
+  document.getElementById('cal-zoom-wrap').style.display=on?'block':'none';
+}
+
+// ── ICS generation & download ─────────────────────────────────────────────────
+function padZ(n){return String(n).padStart(2,'0');}
+function toICSDate(dateStr,timeStr){
+  // dateStr: YYYY-MM-DD, timeStr: H:MM or HH:MM
+  var dp=dateStr.split('-');
+  var tp=timeStr.split(':');
+  var yr=parseInt(dp[0]),mo=parseInt(dp[1]),dy=parseInt(dp[2]);
+  var hr=parseInt(tp[0]),mn=parseInt(tp[1]||'0');
+  // Return local time format (no Z = floating / local)
+  return dp[0]+padZ(mo)+padZ(dy)+'T'+padZ(hr)+padZ(mn)+'00';
+}
+function escICS(s){return (s||'').replace(/[,;\\]/g,'\\$&').replace(/\n/g,'\\n');}
+function downloadICS(){
+  var d=_calDetails;
+  var inv=INV.find(function(i){return i.id===d.iid;});
+  var invName=inv?inv.n:'Investor';
+  var title='Project Javelin – '+d.callName+' ('+invName+')';
+  // Normalize dateStr to YYYY-MM-DD
+  var dateStr=d.dateStr;
+  if(dateStr&&dateStr.indexOf('-')===-1){
+    // fallback: skip if unparseable
+    toast('Cannot parse date for ICS');return;
+  }
+  var dtStart=toICSDate(dateStr,d.startTime);
+  var dtEnd=toICSDate(dateStr,d.endTime);
+  var zoomUrl=document.getElementById('cal-zoom-toggle').checked?document.getElementById('cal-zoom-url').value.trim():'';
+  var desc='Project Javelin due diligence call: '+d.callName+(zoomUrl?'\\n\\nZoom: '+zoomUrl:'');
+  var location=zoomUrl?zoomUrl:'Conference Call';
+  var modal=document.getElementById('cal-modal');
+  var atts=modal._attendees||[];
+  var uid=Date.now()+'@projectjavelin';
+  var now=new Date();
+  var dtstamp=now.getFullYear()+padZ(now.getMonth()+1)+padZ(now.getDate())+'T'+padZ(now.getHours())+padZ(now.getMinutes())+padZ(now.getSeconds())+'Z';
+  var lines=[
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Project Javelin//Scheduler//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:REQUEST',
+    'BEGIN:VEVENT',
+    'UID:'+uid,
+    'DTSTAMP:'+dtstamp,
+    'DTSTART:'+dtStart,
+    'DTEND:'+dtEnd,
+    'SUMMARY:'+escICS(title),
+    'DESCRIPTION:'+escICS(desc),
+    'LOCATION:'+escICS(location),
+    'ORGANIZER;CN=Javelin Team:mailto:javelin@projectjavelin.com'
+  ];
+  atts.forEach(function(a){
+    lines.push('ATTENDEE;CN='+escICS(a.name)+';ROLE=REQ-PARTICIPANT;RSVP=TRUE:mailto:'+(a.email||'unknown@projectjavelin.com'));
+  });
+  lines.push('END:VEVENT','END:VCALENDAR');
+  var ics=lines.join('\r\n');
+  var blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;a.download='ProjectJavelin-'+d.callName.replace(/\s/g,'')+'.ics';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  document.getElementById('cal-modal').style.display='none';
+  toast('Calendar invite downloaded — open in Outlook to send');
+}
 function showRequestCallForm(){var f=document.getElementById('request-call-form');if(f)f.style.display='block';}
 function submitCallRequest(){
   if(!ci)return;
@@ -1155,16 +1392,16 @@ function loadDemo(){
   Object.assign(bk,{'blueowl_Model Review':'Mon 3/31<br>10:00 – 11:00am','blueowl_Asset Review':'Tue 4/1<br>2:00 – 3:00pm','blackstone_Model Review':'Mon 3/31<br>11:00am – 12:00pm','hunterpoint_Model Review':'Wed 4/2<br>9:00 – 9:30am','hunterpoint_Asset Review':'Wed 4/2<br>3:00 – 4:00pm','hunterpoint_LP Base':'Thu 4/3<br>10:00 – 11:30am','hunterpoint_Value Add':'Thu 4/3<br>2:00 – 3:00pm','bonaccord_Model Review':'Tue 4/1<br>9:00 – 10:00am','wafra_Model Review':'Fri 4/4<br>10:00 – 10:30am','wafra_Asset Review':'Fri 4/4<br>2:00 – 3:00pm'});
   ag['blueowl']['Model Review']=[{n:'Blue Owl - GP Stakes DD Framework.pdf',s:'2.4 MB',d:'3/27/2026',t:'PDF'}];
   ag['blueowl']['Asset Review']=[{n:'Blue Owl - Asset-Level Questions.docx',s:'340 KB',d:'3/27/2026',t:'DOCX'}];
-  ag['hunterpoint']['Model Review']=[{n:'Hunterpoint - Preliminary Questions.docx',s:'186 KB',d:'3/26/2026',t:'DOCX'}];
-  ag['hunterpoint']['LP Base']=[{n:'Hunterpoint - Fee Analysis Model.xlsx',s:'1.1 MB',d:'3/26/2026',t:'XLSX'}];
+  ag['hunterpoint']['Model Review']=[{n:'Hunter Point - Preliminary Questions.docx',s:'186 KB',d:'3/26/2026',t:'DOCX'}];
+  ag['hunterpoint']['LP Base']=[{n:'Hunter Point - Fee Analysis Model.xlsx',s:'1.1 MB',d:'3/26/2026',t:'XLSX'}];
   addN('<strong>Blue Owl</strong> uploaded for Model Review: GP Stakes DD Framework.pdf');
-  addN('<strong>Hunterpoint</strong> uploaded for LP Base: Fee Analysis Model.xlsx');
+  addN('<strong>Hunter Point</strong> uploaded for LP Base: Fee Analysis Model.xlsx');
   customCalls['blueowl']=[{name:'Sensitive Topics',requestedWith:'CEO'}];
   ag['blueowl']['Sensitive Topics']=[];
   customCalls['hunterpoint']=[{name:'Management Co. Expenses',requestedWith:'CFO'}];
   ag['hunterpoint']['Management Co. Expenses']=[];
   addN('<strong>Blue Owl</strong> requested call: Sensitive Topics with CEO');
-  addN('<strong>Hunterpoint</strong> requested call: Management Co. Expenses with CFO');
+  addN('<strong>Hunter Point</strong> requested call: Management Co. Expenses with CFO');
   rD();toast('Demo data loaded');
 }
 
@@ -1218,7 +1455,7 @@ function renderAIItems(items){
     if(item.investor&&item.priority!=='good'){
       var inv=INV.find(function(v){return v.n===item.investor;});
       if(inv){
-        if(item.title.indexOf('No Calls')!==-1||item.title.indexOf('Incomplete')!==-1){
+        if(item.title.indexOf('Send Scheduling Link')!==-1||item.title.indexOf('Follow up')!==-1||item.title.indexOf('Book Remaining')!==-1){
           actionBtn='<button class="btn bo bs" onclick="show(\'s-email\');document.getElementById(\'ei\').value=\''+inv.id+'\';genEmail();">Draft Email</button>';
         }else if(item.title.indexOf('Agenda')!==-1){
           actionBtn='<button class="btn bo bs" onclick="viewAs();document.getElementById(\'va-sel\').value=\''+inv.id+'\';viewAs();">View Booking</button>';
